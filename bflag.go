@@ -16,6 +16,7 @@ type bflag struct {
 	floats      map[string]*FloatOption
 	args        []string
 	invalidArgs []string
+	nOptions    int
 }
 
 var bf *bflag
@@ -28,6 +29,7 @@ func init() {
 		floats:      make(map[string]*FloatOption),
 		args:        make([]string, 0),
 		invalidArgs: make([]string, 0),
+		nOptions:    0,
 	}
 }
 
@@ -73,6 +75,7 @@ func DefineBool(name string, shortName byte, defaultVal bool) *BoolOption {
 	}
 	bf.bools[name] = data
 	bf.bools[string(shortName)] = data
+	bf.nOptions++
 	return data
 }
 
@@ -86,6 +89,7 @@ func DefineString(name string, shortName byte, defaultVal string) *StringOption 
 	}
 	bf.strings[name] = data
 	bf.strings[string(shortName)] = data
+	bf.nOptions++
 	return data
 }
 
@@ -99,6 +103,7 @@ func DefineInt(name string, shortName byte, defaultVal int) *IntOption {
 	}
 	bf.ints[name] = data
 	bf.ints[string(shortName)] = data
+	bf.nOptions++
 	return data
 }
 
@@ -112,6 +117,7 @@ func DefineFloat(name string, shortName byte, defaultVal float64) *FloatOption {
 	}
 	bf.floats[name] = data
 	bf.floats[string(shortName)] = data
+	bf.nOptions++
 	return data
 }
 
@@ -197,6 +203,16 @@ func SetFloat(name string, value float64) error {
 	return nil
 }
 
+// NArgs returns number of non-option arguments
+func NArgs() int {
+	return len(bf.args)
+}
+
+// NOptions returns number of option arguments
+func NOptions() int {
+	return bf.nOptions
+}
+
 // Parse will merge the command-line arguments into user-defined options
 func Parse() {
 	osArgs := os.Args[1:]
@@ -256,7 +272,7 @@ func Parse() {
 				}
 			}
 
-			// Check `option=value` vs. `option value` for non-boolean flags
+			// Check `--option=value` vs. `--option value` (and shortform) for non-boolean flags
 			if strings.Index(arg, "=") == -1 {
 				// must get the next command-line argument for value
 				if i == len(args)-1 {
