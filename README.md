@@ -48,6 +48,5 @@ There is already a similar official package called [flag](https://golang.org/pkg
 ## TODO
 
 * Handling of `--help` and `--version` options
-* Combined short flags (`-abcdef`)
 * Documentation
 * Unit tests

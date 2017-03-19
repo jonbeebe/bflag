@@ -51,3 +51,9 @@ func isValidFlag(name string) bool {
 	match, _ := regexp.MatchString(regPattern, name)
 	return match
 }
+
+func isValidCombinedFlag(name string) bool {
+	regPattern := "\\A-[[:alpha:]]{2,}\\z"
+	match, _ := regexp.MatchString(regPattern, name)
+	return match
+}

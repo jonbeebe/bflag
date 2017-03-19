@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -198,13 +199,27 @@ func SetFloat(name string, value float64) error {
 
 // Parse will merge the command-line arguments into user-defined options
 func Parse() {
-	args := os.Args[1:]
-	removeIndexes := []int{}
+	osArgs := os.Args[1:]
+	removeSet := map[int]bool{}
 	invalidArgs := []string{}
 
+	// Expand short bool options
+	args := make([]string, 0, len(osArgs))
+	for _, arg := range osArgs {
+		name, _ := parseOption(arg)
+		if isValidCombinedFlag(arg) {
+			nameArr := strings.Split(name, "")
+			for _, v := range nameArr {
+				args = append(args, "-"+v)
+			}
+		} else {
+			args = append(args, arg)
+		}
+	}
+
 	for i, arg := range args {
+		// Check to see if there is a valid option set
 		if isValidOption(arg) {
-			// Check to see if there is a valid option set
 			name, val := parseOption(arg)
 
 			// Parse boolean option
@@ -217,11 +232,18 @@ func Parse() {
 					} else {
 						SetBool(name, true)
 					}
-					removeIndexes = append(removeIndexes, i)
+					removeSet[i] = true
 					continue
 				} else {
 					invalidArgs = append(invalidArgs, "invalid option '"+arg+"'")
-					removeIndexes = append(removeIndexes, i)
+					removeSet[i] = true
+					continue
+				}
+			} else {
+				if isValidFlag(arg) {
+					// bool flag passed but does not match any defined bool types
+					invalidArgs = append(invalidArgs, "'"+arg+"' is not a valid option")
+					removeSet[i] = true
 					continue
 				}
 			}
@@ -231,13 +253,14 @@ func Parse() {
 				// must get the next command-line argument for value
 				if i == len(args)-1 {
 					invalidArgs = append(invalidArgs, "option '"+arg+"' is missing a value")
-					removeIndexes = append(removeIndexes, i)
+					removeSet[i] = true
 					continue
 				}
 				val = args[i+1]
-				removeIndexes = append(removeIndexes, i, i+1)
+				removeSet[i] = true
+				removeSet[i+1] = true
 			} else {
-				removeIndexes = append(removeIndexes, i)
+				removeSet[i] = true
 			}
 
 			// Parse string option
@@ -266,15 +289,25 @@ func Parse() {
 				continue
 			}
 
+			// Doesn't match anything else; invalid option
+			invalidArgs = append(invalidArgs, "'"+arg+"' is not a valid option")
+
 		} else {
 			// Invalid option found, check to see if it begins with - or --
 			isOption, _ := regexp.MatchString("\\A-{1,2}", arg)
 			if isOption {
 				invalidArgs = append(invalidArgs, "'"+arg+"' is not a valid option")
-				removeIndexes = append(removeIndexes, i)
+				removeSet[i] = true
 			}
 		}
 	}
+
+	// Construct list of sorted indexes to remove based on removeSet
+	var removeIndexes []int
+	for i := range removeSet {
+		removeIndexes = append(removeIndexes, i)
+	}
+	sort.Ints(removeIndexes)
 
 	// Populate Args with all other non-option command-line arguments
 	for i := len(removeIndexes) - 1; i >= 0; i-- {
