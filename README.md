@@ -1,6 +1,13 @@
-# bflag [![GoDoc](https://godoc.org/github.com/mitchellh/cli?status.png)](https://godoc.org/github.com/mitchellh/cli)
+# bflag [![GoDoc](https://godoc.org/github.com/jonbeebe/bflag?status.png)](https://godoc.org/github.com/jonbeebe/bflag)
 
-**bflag** is a simple [Go](https://golang.org) package for building command-line interfaces.
+**bflag** is a simple [Go](https://golang.org) package for building command-line interfaces. It primarily does two things:
+
+1. Allows you to define valid command-line options for your program.
+2. Parses user-provided options and gives you all the other arguments (minus the options) so your program can react accordingly.
+
+## What about flag?
+
+There is already a similar official package called [flag](https://golang.org/pkg/flag/) that has many more features than bflag, but it ultimately didn't fit my needs because it only supports single-hyphen (`-flag`) options.
 
 ## Example usage
 
@@ -41,5 +48,6 @@
 ## TODO
 
 * Handling of `--help` and `--version` options
+* Combined short flags (`-abcdef`)
 * Documentation
 * Unit tests
