@@ -241,10 +241,18 @@ func Parse() {
 				}
 			} else {
 				if isValidFlag(arg) {
-					// bool flag passed but does not match any defined bool types
-					invalidArgs = append(invalidArgs, "'"+arg+"' is not a valid option")
-					removeSet[i] = true
-					continue
+					isStr := GetString(name)
+					isInt := GetInt(name)
+					isFloat := GetFloat(name)
+
+					// The argument is a valid single-character option (e.g. -a)
+					// but does not match any other types; invalid option
+					if isStr == nil && isInt == nil && isFloat == nil {
+						// bool flag passed but does not match any defined bool types
+						invalidArgs = append(invalidArgs, "'"+arg+"' is not a valid option")
+						removeSet[i] = true
+						continue
+					}
 				}
 			}
 
