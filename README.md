@@ -1,6 +1,6 @@
-# bflag 
+# bflag [![GoDoc](https://godoc.org/github.com/mitchellh/cli?status.png)](https://godoc.org/github.com/mitchellh/cli)
 
-**bflag** is a simple Go package for building command-line interfaces.
+**bflag** is a simple [Go](https://golang.org) package for building command-line interfaces.
 
 ## Example usage
 
