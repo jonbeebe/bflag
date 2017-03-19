@@ -12,12 +12,7 @@
     )
 
     func main() {
-        defer func() {
-            if msg := recover(); msg != nil {
-                fmt.Println(msg)
-            }
-        }()
-
+        // Define options for our program
         boolOpt := bflag.DefineBool("mybool", 'b', false)
         strOpt := bflag.DefineString("mystr", 's', "Hello world")
         intOpt := bflag.DefineInt("myint", 'i', 32)
