@@ -345,3 +345,14 @@ func Parse() {
 	bf.args = args
 	bf.invalidArgs = invalidArgs
 }
+
+// Reset bflags to original state
+func Reset() {
+	bf.bools = make(map[string]*BoolOption)
+	bf.strings = make(map[string]*StringOption)
+	bf.ints = make(map[string]*IntOption)
+	bf.floats = make(map[string]*FloatOption)
+	bf.args = make([]string, 0)
+	bf.invalidArgs = make([]string, 0)
+	bf.nOptions = 0
+}

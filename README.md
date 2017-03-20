@@ -34,11 +34,11 @@ There is already a similar official package called [flag](https://golang.org/pkg
         }
 
         // Print options
-        fmt.Print("Options: ")
+        fmt.Printf("Options (%d): ", bflag.NOptions())
         fmt.Printf("--mybool: %t --mystr: %s --myint: %d --myfloat: %.2f\n", boolOpt.Value, strOpt.Value, intOpt.Value, floatOpt.Value)
 
         // Print arguments (bflag doesn't differentiate between commands and arguments)
-        fmt.Print("Arguments: ")
+        fmt.Printf("Arguments (%d): ", bflag.NArgs())
         for _, v := range args {
             fmt.Printf("%s ", v)
         }
@@ -49,4 +49,3 @@ There is already a similar official package called [flag](https://golang.org/pkg
 
 * Handling of `--help` and `--version` options
 * Documentation
-* Unit tests
